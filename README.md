@@ -26,7 +26,7 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/Fabio-FS/Polarization_and_Homophily_SIR.git
 
 # Install dependencies
 pip install -r requirements.txt
