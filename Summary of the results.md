@@ -1,0 +1,6 @@
+# Results summary:
+
+- If there is no homophily or heterophily (h=0) there is a paradoxical dependence of the polarization on the number of infected. pol has a positive effect for measures that reduces each individual susceptibility like mask wearing, and negative for cumulative measures that prevent people to became infected such as vaccination, and measures that allows people to speed up their recovery rate such as testing.
+- If there is homophily everything is much more complicated, but in general negative homophily (heterophily, h<0) is good, and homophily is bad. In case of negative homophily having a polarized society is bad, while in case of positive homophily, which is much more common, having a polarized society is good.
+
+- Having a mixed society, in the homogeneous scenario (for sir-mask) increases the fraction of protectors who became infected, but decreases the fraction of non-protectors that becames infected. Overall there is a positive effect of population mixing. Up to 40% for our choice of parameters.
