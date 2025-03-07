@@ -124,6 +124,8 @@ def vaccination_sir_step(
     
     return S_new, I_new, R_new, V_new
 
+
+
 # Main simulation functions
 def sim_maskSIR_final(
     beta_params: Tuple[float, float],
@@ -303,3 +305,257 @@ def sim_SIRV_final(
         final_state,
         nan_state
     ), r0, obs_h
+
+
+def sim_maskSIR_trajectory(
+    beta_params: Tuple[float, float],
+    params: ParamType,
+    n_steps: int,
+    initial_infected_prop: float = 1e-4,
+    N_COMPARTMENTS: int = 100,
+    SPB_exponent: float = 1.0,
+    behavior_distribution: Optional[jnp.ndarray] = None,
+    custom_contact_matrix: Optional[jnp.ndarray] = None,
+    custom_populations: Optional[jnp.ndarray] = None
+) -> Tuple[Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray], float, float]:
+    """Run maskSIR simulation and return full trajectory of states
+    
+    Args:
+        beta_params: Alpha and beta parameters for population distribution
+        params: Dictionary with model parameters (mu_max, beta_M, recovery_rate, etc.)
+        n_steps: Number of simulation steps
+        initial_infected_prop: Initial proportion of infected individuals
+        N_COMPARTMENTS: Number of behavioral compartments
+        SPB_exponent: Exponent for behavior pattern (default=1.0 for linear)
+        behavior_distribution: Optional custom mask-wearing distribution
+        custom_contact_matrix: Optional custom contact matrix
+        custom_populations: Optional custom population distribution
+        
+    Returns:
+        Tuple of:
+        - State trajectories (S, I, R arrays of shape [n_steps+1, N_COMPARTMENTS])
+        - Basic reproduction number (R0)
+        - Observed homophily
+    """
+    # Initialize populations
+    if custom_populations is not None:
+        POP = custom_populations
+        N_COMPARTMENTS = len(POP)
+        initial_state = (
+            POP * (1 - initial_infected_prop),
+            POP * initial_infected_prop,
+            jnp.zeros_like(POP)
+        )
+    else:
+        initial_state = initialize_states(beta_params, initial_infected_prop, N_COMPARTMENTS)
+        POP = initial_state[0] + initial_state[1] + initial_state[2]
+    
+    # Set up contact matrix
+    use_contact_matrix = True if custom_contact_matrix is not None else params.get('homophilic_tendency', 0) != 0
+    C = custom_contact_matrix if custom_contact_matrix is not None else create_contact_matrix(
+        N_COMPARTMENTS, params.get('homophilic_tendency', 0), POP
+    )
+    
+    # Set up mask-wearing behavior
+    mask_wearing = behavior_distribution if behavior_distribution is not None else generate_behavior_pattern(
+        params['mu_max'], N_COMPARTMENTS, SPB_exponent
+    )
+    susceptibilities = params['beta_M'] * (1 - mask_wearing)
+    
+    # Calculate R0
+    gamma = params['recovery_rate']
+    r0 = R0_maskSIR(params['beta_M'], mask_wearing, gamma, C, POP)
+    
+    # Initialize trajectories
+    S_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    I_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    R_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    
+    # Store initial state
+    S_trajectory = S_trajectory.at[0].set(initial_state[0])
+    I_trajectory = I_trajectory.at[0].set(initial_state[1])
+    R_trajectory = R_trajectory.at[0].set(initial_state[2])
+    
+    # Run simulation
+    state = initial_state
+    dT = params.get('dT', 0.25)
+    
+    for t in range(n_steps):
+        state = mask_sir_step(state, susceptibilities, gamma, C, use_contact_matrix, dT)
+        S_trajectory = S_trajectory.at[t + 1].set(state[0])
+        I_trajectory = I_trajectory.at[t + 1].set(state[1])
+        R_trajectory = R_trajectory.at[t + 1].set(state[2])
+    
+    return (S_trajectory, I_trajectory, R_trajectory), r0, 0.0
+
+
+def sim_SIRT_trajectory(
+    beta_params: Tuple[float, float],
+    params: ParamType,
+    n_steps: int,
+    initial_infected_prop: float = 1e-4,
+    N_COMPARTMENTS: int = 100,
+    SPB_exponent: float = 1.0,
+    behavior_distribution: Optional[jnp.ndarray] = None,
+    custom_contact_matrix: Optional[jnp.ndarray] = None,
+    custom_populations: Optional[jnp.ndarray] = None
+) -> Tuple[Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray], float, float]:
+    """Run SIRT simulation and return full trajectory of states
+    
+    Args:
+        beta_params: Alpha and beta parameters for population distribution
+        params: Dictionary with model parameters (testing_rates, susceptibility_rate, recovery_rate, etc.)
+        n_steps: Number of simulation steps
+        initial_infected_prop: Initial proportion of infected individuals
+        N_COMPARTMENTS: Number of behavioral compartments
+        SPB_exponent: Exponent for behavior pattern (default=1.0 for linear)
+        behavior_distribution: Optional custom testing rate distribution
+        custom_contact_matrix: Optional custom contact matrix
+        custom_populations: Optional custom population distribution
+        
+    Returns:
+        Tuple of:
+        - State trajectories (S, I, R arrays of shape [n_steps+1, N_COMPARTMENTS])
+        - Basic reproduction number (R0)
+        - Observed homophily
+    """
+    # Initialize populations
+    if custom_populations is not None:
+        POP = custom_populations
+        N_COMPARTMENTS = len(POP)
+        initial_state = (
+            POP * (1 - initial_infected_prop),
+            POP * initial_infected_prop,
+            jnp.zeros_like(POP)
+        )
+    else:
+        initial_state = initialize_states(beta_params, initial_infected_prop, N_COMPARTMENTS)
+        POP = initial_state[0] + initial_state[1] + initial_state[2]
+    
+    # Set up contact matrix
+    use_contact_matrix = True if custom_contact_matrix is not None else params.get('homophilic_tendency', 0) != 0
+    C = custom_contact_matrix if custom_contact_matrix is not None else create_contact_matrix(
+        N_COMPARTMENTS, params.get('homophilic_tendency', 0), POP
+    )
+    
+    # Set up testing behavior
+    testing_rates = behavior_distribution if behavior_distribution is not None else generate_behavior_pattern(
+        params['testing_rates'][1], N_COMPARTMENTS, SPB_exponent
+    )
+    
+    # Adjusted recovery rate based on testing
+    gammaS = params['recovery_rate'] + testing_rates
+    
+    # Calculate R0
+    susceptibility = params['susceptibility_rate']
+    r0 = R0_SIRT(susceptibility, gammaS, C, POP)
+    
+    # Initialize trajectories
+    S_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    I_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    R_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    
+    # Store initial state
+    S_trajectory = S_trajectory.at[0].set(initial_state[0])
+    I_trajectory = I_trajectory.at[0].set(initial_state[1])
+    R_trajectory = R_trajectory.at[0].set(initial_state[2])
+    
+    # Run simulation
+    state = initial_state
+    dT = params.get('dT', 0.25)
+    
+    for t in range(n_steps):
+        state = testing_sir_step(state, susceptibility, gammaS, C, use_contact_matrix, dT)
+        S_trajectory = S_trajectory.at[t + 1].set(state[0])
+        I_trajectory = I_trajectory.at[t + 1].set(state[1])
+        R_trajectory = R_trajectory.at[t + 1].set(state[2])
+    
+    return (S_trajectory, I_trajectory, R_trajectory), r0, 0.0
+
+
+def sim_SIRV_trajectory(
+    beta_params: Tuple[float, float],
+    params: ParamType,
+    n_steps: int,
+    initial_infected_prop: float = 1e-4,
+    N_COMPARTMENTS: int = 100,
+    SPB_exponent: float = 1.0,
+    behavior_distribution: Optional[jnp.ndarray] = None,
+    custom_contact_matrix: Optional[jnp.ndarray] = None,
+    custom_populations: Optional[jnp.ndarray] = None
+) -> Tuple[Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray, jnp.ndarray], float, float]:
+    """Run SIRV simulation and return full trajectory of states
+    
+    Args:
+        beta_params: Alpha and beta parameters for population distribution
+        params: Dictionary with model parameters (vaccination_rates, susceptibility_rate, recovery_rate, etc.)
+        n_steps: Number of simulation steps
+        initial_infected_prop: Initial proportion of infected individuals
+        N_COMPARTMENTS: Number of behavioral compartments
+        SPB_exponent: Exponent for behavior pattern (default=1.0 for linear)
+        behavior_distribution: Optional custom vaccination rate distribution
+        custom_contact_matrix: Optional custom contact matrix
+        custom_populations: Optional custom population distribution
+        
+    Returns:
+        Tuple of:
+        - State trajectories (S, I, R, V arrays of shape [n_steps+1, N_COMPARTMENTS])
+        - Basic reproduction number (R0)
+        - Observed homophily
+    """
+    # Initialize populations
+    if custom_populations is not None:
+        POP = custom_populations
+        N_COMPARTMENTS = len(POP)
+        initial_state = (
+            POP * (1 - initial_infected_prop),
+            POP * initial_infected_prop,
+            jnp.zeros_like(POP),
+            jnp.zeros_like(POP)
+        )
+    else:
+        initial_state = initialize_states(beta_params, initial_infected_prop, N_COMPARTMENTS, include_vaccinated=True)
+        POP = initial_state[0] + initial_state[1] + initial_state[2] + initial_state[3]
+    
+    # Set up contact matrix
+    use_contact_matrix = True if custom_contact_matrix is not None else params.get('homophilic_tendency', 0) != 0
+    C = custom_contact_matrix if custom_contact_matrix is not None else create_contact_matrix(
+        N_COMPARTMENTS, params.get('homophilic_tendency', 0), POP
+    )
+    
+    # Set up vaccination behavior
+    vaccination_rates = behavior_distribution if behavior_distribution is not None else generate_behavior_pattern(
+        params['vaccination_rates'][1], N_COMPARTMENTS, SPB_exponent
+    )
+    
+    # Calculate R0
+    gamma = params['recovery_rate']
+    susceptibility = params['susceptibility_rate']
+    # Use SIRM R0 calculation for SIRV as well
+    r0 = R0_SIRM(jnp.full_like(POP, susceptibility), gamma, C, POP)
+    
+    # Initialize trajectories
+    S_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    I_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    R_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    V_trajectory = jnp.zeros((n_steps + 1, N_COMPARTMENTS))
+    
+    # Store initial state
+    S_trajectory = S_trajectory.at[0].set(initial_state[0])
+    I_trajectory = I_trajectory.at[0].set(initial_state[1])
+    R_trajectory = R_trajectory.at[0].set(initial_state[2])
+    V_trajectory = V_trajectory.at[0].set(initial_state[3])
+    
+    # Run simulation
+    state = initial_state
+    dT = params.get('dT', 0.25)
+    
+    for t in range(n_steps):
+        state = vaccination_sir_step(state, vaccination_rates, susceptibility, gamma, C, use_contact_matrix, dT)
+        S_trajectory = S_trajectory.at[t + 1].set(state[0])
+        I_trajectory = I_trajectory.at[t + 1].set(state[1])
+        R_trajectory = R_trajectory.at[t + 1].set(state[2])
+        V_trajectory = V_trajectory.at[t + 1].set(state[3])
+    
+    return (S_trajectory, I_trajectory, R_trajectory, V_trajectory), r0, 0.0
+
