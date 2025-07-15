@@ -1,14 +1,8 @@
 ```
 # Project Structure
 
-
-├── .gitignore
-├── .lprof
-├── .vscode
-│   └── settings.json
+├── BEACOBN Visualization Package user guide.md
 ├── Long term goals.md
-├── Pol_Hom.afdesign
-├── Pol_Hom_backup.afdesign
 ├── README.md
 ├── README_for_Model.md
 ├── README_for_visualization.md
@@ -22,65 +16,78 @@
 │   │   └── unsure or SI
 │   └── with_labels
 ├── notebooks
-│   ├── Fig_0_test.ipynb
-│   ├── Fig_1_SIRM_old.ipynb
-│   ├── Fig_Intro.ipynb
-│   ├── SIR-mask.ipynb
-│   ├── SIRM.ipynb
-│   ├── SIRT.ipynb
-│   ├── SIRV.ipynb
-│   ├── Sophias_data.ipynb
+│   ├── Examples_0.ipynb
+│   ├── Fig_0.ipynb
+│   ├── Fig_1_NEW.ipynb
+│   ├── Fig_2_NEW.ipynb
+│   ├── OLD_notebooks
+│   │   ├── BEACON_REPO.png
+│   │   ├── Fig_0_test.ipynb
+│   │   ├── Fig_1_SIRM_old.ipynb
+│   │   ├── Fig_3_testing.ipynb
+│   │   ├── Fig_Intro.ipynb
+│   │   ├── QR Codes.ipynb
+│   │   ├── SIR-mask.ipynb
+│   │   ├── SIRM.ipynb
+│   │   ├── SIRT.ipynb
+│   │   ├── SIRV.ipynb
+│   │   ├── Sophias_data copy.ipynb
+│   │   ├── Sophias_data.ipynb
+│   │   ├── data_homophily.csv
+│   │   ├── homophily_effect_pub.png
+│   │   ├── physics_paper_qrcode.png
+│   │   ├── plasma_r_colorbar.png
+│   │   ├── plot_functions.py
+│   │   ├── test_for_viola_and_laura.ipynb
+│   │   └── viridis_r_colorbar.png
 │   ├── data_homophily.csv
-│   └── plot_functions.py
+│   ├── figures
+│   │   ├── Fig_0
+│   │   ├── Fig_1
+│   │   └── Fig_2
+│   └── output_figures
+│       ├── behavior_comparison.png
+│       └── polarization_homophily.png
+├── old_stuff
+│   └── README.md
 ├── print_tree.ipynb
 ├── requirements.txt
 ├── setup.py
 ├── src
 │   ├── __init__.py
+│   ├── docs
+│   │   └── adding_models.md
+│   ├── examples
+│   │   └── example_1.ipynb
 │   ├── models
-│   │   ├── SIRM
-│   │   │   ├── __init__.py
-│   │   │   └── integrated.py
-│   │   ├── SIRM_D
-│   │   │   ├── __init__.py
-│   │   │   ├── dynamic.py
-│   │   │   ├── integrated.py
-│   │   │   └── sweep.py
-│   │   ├── SIRT
-│   │   │   ├── __init__.py
-│   │   │   └── integrated.py
-│   │   ├── SIRT_D
-│   │   │   ├── __init__.py
-│   │   │   ├── dynamic.py
-│   │   │   ├── integrated.py
-│   │   │   └── sweep.py
-│   │   ├── SIRV
-│   │   │   ├── __init__.py
-│   │   │   ├── dynamic.py
-│   │   │   ├── integrated.py
-│   │   │   └── sweep.py
-│   │   ├── SIRV_D
-│   │   │   ├── __init__.py
-│   │   │   ├── dynamic.py
-│   │   │   ├── integrated.py
-│   │   │   └── sweep.py
-│   │   ├── __init__.py
-│   │   ├── consolidated_dynamics.py
-│   │   ├── consolidated_sweeps.py
-│   │   ├── mask_SIR
-│   │   │   ├── __init__.py
-│   │   │   └── integrated.py
-│   │   └── mask_SIR_D
-│   │       ├── __init__.py
-│   │       ├── dynamic.py
-│   │       ├── integrated.py
-│   │       └── sweep.py
+│   │   ├── SIRM.py
+│   │   ├── SIRM_isolated.py
+│   │   ├── SIRS.py
+│   │   ├── SIRT.py
+│   │   ├── SIRT_isolated.py
+│   │   ├── SIRV.py
+│   │   ├── SIRV_isolated.py
+│   │   ├── SIR_IRF.py
+│   │   └── __init__.py
 │   └── utils
 │       ├── Contact_Matrix.py
 │       ├── R0.py
 │       ├── __init__.py
 │       ├── batch_sweep.py
-│       └── consolidated_batch_sweep.py
+│       ├── model_utils.py
+│       ├── sensitivity
+│       │   ├── __init__.py
+│       │   └── core.py
+│       ├── visualization
+│       │   ├── __init__.py
+│       │   ├── common.py
+│       │   ├── core.py
+│       │   ├── curve_sweep.py
+│       │   ├── heatmaps.py
+│       │   ├── slices.py
+│       │   └── trajectory.py
+│       ├── visualization _BU.py
+│       └── visualization.py
 ├── tests
 │   ├── 001_test_imports.ipynb
 │   ├── 002_test_SIR.ipynb

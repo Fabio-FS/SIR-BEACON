@@ -5,8 +5,8 @@ from typing import Tuple, Optional
 @jax.jit
 def matrix_scaling(
     matrix: jnp.ndarray,
-    max_iters: int = 10000,
-    threshold: float = 1e-10
+    max_iters: int = 1000,
+    threshold: float = 1e-6
 ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
     """
     Perform matrix scaling to normalize rows and columns to sum to 1.
@@ -26,7 +26,7 @@ def matrix_scaling(
     ones_n = jnp.ones(n)
     ones_m = jnp.ones(m)
     
-    P, u, v = sinkhorn_norm(
+    return sinkhorn_norm(
         -jnp.log(matrix + 1e-10),  # Convert to cost matrix
         ones_n / n,                 # Uniform row distribution
         ones_m / m,                 # Uniform column distribution
@@ -34,11 +34,6 @@ def matrix_scaling(
         max_iters=max_iters,
         threshold=threshold
     )
-    
-    # Scale by the number of compartments to ensure the sum of each row is equal to 1
-    P = P * n  
-    
-    return P, u, v
 
 def sinkhorn_norm(
     cost_matrix: jnp.ndarray,
@@ -107,55 +102,25 @@ def sinkhorn_norm(
     
     return P, u_final, v_final
 
-
-
-def normalize(M) -> jnp.ndarray:
-    """Normalize each column of the matrix to sum to 1"""
-    return M / jnp.sum(M, axis=1, keepdims=True)
-
-def create_contact_matrix(n_groups, homophilic_tendency, group_sizes, Cm_external = None, norm = True) -> jnp.ndarray:
-    if Cm_external is None:
-        positions = jnp.linspace(0, 1, n_groups)
-        diffs = jnp.abs(positions[:, None] - positions[None, :])
-        weights = jnp.exp(-homophilic_tendency * diffs)
-        C = weights  * n_groups * n_groups
-    else:
-        C = Cm_external
-
-    if norm:
-        C = normalize(C)
-        TC = jnp.sum(jnp.outer(group_sizes, group_sizes) * C) # Total contacts
-        C = C / TC # Normalize to total contacts
+def create_contact_matrix(n_groups: int, homophilic_tendency: float, populations: jnp.ndarray) -> jnp.ndarray:
+    """Create contact matrix where Cᵢⱼ is the probability of j contacting i.
     
-    return C
-
-# def create_contact_matrix_old(n_groups: int, homophilic_tendency: float, contact) -> jnp.ndarray:
-#    """Create contact matrix where Cᵢⱼ is the probability of j contacting i.
-#    
-#    Args:
-#        n_groups: Number of groups
-#        homophilic_tendency: h parameter (h=0 gives uniform mixing)
-#        populations: Array of population sizes for each group
-#        
-#    Returns:
-#        Contact matrix C where Cᵢⱼ is the probability of j contacting i
-#    """
-#    # Generate distance-based weights
-#    positions = jnp.linspace(0, 1, n_groups)
-#    diffs = jnp.abs(positions[:, None] - positions[None, :])
-#    weights = jnp.exp(-homophilic_tendency * diffs)
+    Args:
+        n_groups: Number of groups
+        homophilic_tendency: h parameter (h=0 gives uniform mixing)
+        populations: Array of population sizes for each group
+        
+    Returns:
+        Contact matrix C where Cᵢⱼ is the probability of j contacting i
+    """
+    # Generate distance-based weights
+    positions = jnp.linspace(0, 1, n_groups)
+    diffs = jnp.abs(positions[:, None] - positions[None, :])
+    weights = jnp.exp(-homophilic_tendency * diffs)
     
     # For each column j, normalize by sum of weighted populations
     # This ensures each column sums to 1 (total probability = 1)
-#    C = weights #/ jnp.sum(weights, axis=0)[None, :]
-    # find the maximum value in the matrix
-#    min = jnp.min(C)
-
-    # add a little bit of gaussian noise to avoid the sinkhorn algorithm to get stuck in local minima
-    #C += jax.random.normal(jax.random.PRNGKey(42), C.shape) * 1e-2
-    
-    # set all the values of C smaller than the minimum to the minimum value
-#    C = jnp.where(C < min, min, C)
-#    C2, _, _ = matrix_scaling(C)
-#    C2 = C2 * n_groups
-#    return C2
+    C = weights / jnp.sum(weights, axis=0)[None, :]
+    C2, _, _ = matrix_scaling(C)
+    C2 = C2 * n_groups * n_groups
+    return C2

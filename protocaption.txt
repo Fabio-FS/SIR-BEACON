@@ -1,0 +1,28 @@
+[FIG 0] : 
+ -  this is an introductory figure.
+    the top row contains 3 exemplifications of symmetrical distribution of behavior. For consensus/homogeneous/polarized distribution
+    the leftmost column is the contact matrix for homogeneous mixing (bottom, h=0, mild homophily, center h=2, and higher homophily top h = 4)
+    The center drawing are a visual representation of the 9 combination of distribution of behavior and homophily.
+
+[FIG 1]:
+ -  this figure shows the paradoxical effect of polarization (variance of behavior) and the negative effect of homophily.
+    the first column (A,E,I) shows a visual representation of the disease models SIRM, SIRT, SIRV.
+    the second column (B, F, J) shows a heatmap showing the fraction of infected individual at the end of the simulations for the 3 disease models.
+        On the x-axis there is the polarization from 0 to 1, and on the y-axis the homophily from 0 to 6.
+    the third column (C, G, K) shows "horizontal slices" of the plots in the second column. Basically showing how the polarization affects the total number of infected
+        for 3 fixed values of homophily, 0, 3, and 6.
+    the fourth column (D, H, L) shows vertical slices for polarization = 0, 0.5, 1
+
+[FIG 2]:
+
+ -  this figures introduces real data from a survey. We found that including average human behavior extrapolated from the averange number of masks/tests/vaccines 
+        used by the population(bottom left corner, corresponding to homogenous mixing and consensus) is not enough to predict the outcome of an outbreak.
+        and using that can lead up to a x600 error in terms of prediction in case of SIRT.
+    the first column is the measured contact matrix we found in the survey we performed
+    the second column is the measured behavior distribuion from the same survey
+    the third column is similar to the second column of figure 1, but this time we imposed the correct "average" behavior. (that means asymmetrical beta distribution)
+    the last column is the "prediction error". From the survey we calculated the homophily, and polarization and the 95% confidence interval of such measurement. The gray area are the minimum and maximum
+        values of the number of infected and recovered in that interval. This is then compared with the "prediction" one would make assuming homogenous population with the same average behavior.
+        THE homogenous SIRM model overestimate the prediction by -35%
+        The homogenous SIRT model cannot predict the outbreak completely, and is off by more than a x600 factor
+        the homogenous SIRV overestimate the prediction by a 120%

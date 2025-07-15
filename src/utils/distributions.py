@@ -7,7 +7,7 @@ def pol_to_alpha(pol: jnp.ndarray) -> jnp.ndarray:
     """Convert polarization values to alpha values"""
     return 1/(pol*2) - 0.5
 
-def pol_mean_to_ab(pol: jnp.ndarray, m: jnp.ndarray) -> Tuple[jnp.ndarray, jnp.ndarray]:
+def pol_mean_to_ab(pol: jnp.ndarray, m : jnp.ndarray = 0.5) -> Tuple[jnp.ndarray, jnp.ndarray]:
     """Convert variance and mean to alpha, beta parameters of beta distribution
     Args:
         p: polarization values
@@ -20,42 +20,24 @@ def pol_mean_to_ab(pol: jnp.ndarray, m: jnp.ndarray) -> Tuple[jnp.ndarray, jnp.n
     b = 4*m*(m-1)**2/pol +m - 1
     return a, b
 
-def my_beta_symmetric(a: float, n_groups: int, norm: float = 1.0) -> jnp.ndarray:
-    """Generate population sizes based on symmetric beta distribution
-    
-    Args:
-        a: Shape parameter (alpha = beta for symmetry)
-        n_groups: Number of subpopulations
-        norm: Total population size
-        
-    Returns:
-        Array of population sizes
-    """
-    x = jnp.linspace(1/n_groups/2, 1-1/n_groups/2, n_groups)
-     
-    from jax.scipy.stats import beta as jbeta
-    y = jbeta.pdf(x, a, a)
-    y = y / jnp.sum(y) * norm
-    return y
-
 def my_beta_asymmetric(a: float, b: float, n_groups: int, norm: float = 1.0) -> jnp.ndarray:
-    """Generate population sizes based on asymmetric beta distribution
-    
-    Args:
-        a: First shape parameter (alpha)
-        b: Second shape parameter (beta)
-        n_groups: Number of subpopulations
-        norm: Total population size
-        
-    Returns:
-        Array of population sizes
-    """
-    x = jnp.linspace(1/n_groups/2, 1-1/n_groups/2, n_groups)
-    
+    """Generate population sizes based on asymmetric beta distribution with better handling of extreme polarization"""
+    # Use the CDF to compute the probability mass in each bin
     from jax.scipy.stats import beta as jbeta
-    y = jbeta.pdf(x, a, b)
-    y = y / jnp.sum(y) * norm
-    return y
+    
+    # Create bin edges that divide [0,1] into n_groups equal segments
+    bin_edges = jnp.linspace(0, 1, n_groups + 1)
+    
+    # Calculate probability mass in each bin using the CDF
+    bin_probs = jnp.array([jbeta.cdf(bin_edges[i+1], a, b) - jbeta.cdf(bin_edges[i], a, b) for i in range(n_groups)])
+    
+    # Normalize and scale
+    return bin_probs / jnp.sum(bin_probs) * norm
 
 def homogeneous_distribution(n_groups: int, min: float, max: float):
     return jnp.linspace(min+jnp.abs(max-min)/n_groups/2, max-jnp.abs(max-min)/n_groups/2, n_groups)
+
+def ab_to_pol_mean(a: float, b: float):
+    pol = 4*a*b/((a+b)*(a+b+1))
+    mean = a/(a+b)
+    return pol, mean

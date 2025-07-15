@@ -1,0 +1,30 @@
+{
+    "mus": {
+        "mean": [0.76, 0.77, 0.78],
+        "pol": [0.26, 0.28, 0.30],
+        "h": [1.46, 1.61, 1.77]
+    },
+    "taus": {
+        "mean": [0.45, 0.47, 0.49],
+        "pol": [0.46, 0.48, 0.50],
+        "h": [0.81, 0.87, 0.96]
+    },
+    "xis": {
+        "mean": [0.59, 0.61, 0.63],
+        "pol": [0.55, 0.57, 0.60],
+        "h": [0.71, 0.77, 0.86]
+    },
+    "PARAMS": {
+        "beta_M": 0.2,
+        "recovery_rate": 0.1,
+        "dT": 1,
+        "SPB_exponent": 1,
+        "fixed_mean": 0.5,
+        "mu_max": 0.5,
+        "mu_min": 0,
+        "testing_rate_min": 0,
+        "testing_rate_max": 0.2714,
+        "vaccination_rate_min": 0,
+        "vaccination_rate_max": 0.008
+    }
+}

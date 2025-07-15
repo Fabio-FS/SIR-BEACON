@@ -1,43 +1,33 @@
-# Re-export the model-specific functions from the submodules
-from .mask_SIR import (
-    sweep_pol_mask_maskSIR,
-    sweep_pol_mean_maskSIR,
-    sweep_hom_pol_maskSIR
-)
+"""
+BEACON epidemic model collection
 
-from .SIRT import (
-    sweep_pol_SPB_SIRT,
-    sweep_pol_mean_SIRT,
-    sweep_hom_pol_SIRT
-)
+This package contains various compartmental epidemic models that capture
+different interventions and social structures.
 
-from .SIRV import (
-    sweep_pol_SPB_SIRV,
-    sweep_pol_mean_SIRV,
-    sweep_pol_hom_SIRV
-)
+All Python files in this directory will be automatically imported.
+"""
 
-from .consolidated_dynamics import (
-    sim_maskSIR_trajectory,
-    sim_SIRT_trajectory,
-    sim_SIRV_trajectory,
-    sim_maskSIR_final,
-    sim_SIRT_final,
-    sim_SIRV_final
-)
+import os
+import importlib
+import pkgutil
+import sys
+from pathlib import Path
 
-# Export all the functions
-__all__ = [
-    'sweep_pol_mask_maskSIR',
-    'sweep_pol_mean_maskSIR',
-    'sweep_hom_pol_maskSIR',
-    'sweep_pol_SPB_SIRT',
-    'sweep_pol_mean_SIRT',
-    'sweep_hom_pol_SIRT',
-    'sweep_pol_SPB_SIRV',
-    'sweep_pol_mean_SIRV',
-    'sweep_pol_hom_SIRV',
-    'sim_maskSIR_trajectory',
-    'sim_SIRT_trajectory',
-    'sim_SIRV_trajectory'
-]
+# Get the current directory
+_current_dir = Path(__file__).parent
+
+# Automatically import all modules in this package
+for (_, module_name, _) in pkgutil.iter_modules([str(_current_dir)]):
+    # Skip __init__ itself
+    if module_name != "__init__":
+        # Import the module
+        module = importlib.import_module(f".{module_name}", package=__name__)
+        
+        # Add all its attributes to the package namespace
+        for attribute_name in dir(module):
+            # Skip private attributes (starting with _)
+            if not attribute_name.startswith('_'):
+                globals()[attribute_name] = getattr(module, attribute_name)
+
+# Clean up namespace to avoid exposing implementation details
+del os, importlib, pkgutil, sys, Path, _current_dir
