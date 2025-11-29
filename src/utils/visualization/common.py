@@ -201,6 +201,9 @@ def _plot_single_metric(fig, ax, metric_data: Dict[str, Any],
         vmax=metric_data['vmax'],
         rasterized=False  # This is the key change - ensure vector output
     )
+    MMIN = np.nanmin(data)
+    MMAX = np.nanmax(data)
+    print("min-max range:", MMIN, " to ", MMAX, " -- max variation -- ", np.round((MMAX-MMIN)*100))
     
     # Add colorbar if requested
     if show_colorbar:

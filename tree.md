@@ -3,77 +3,30 @@
 
 ├── BEACOBN Visualization Package user guide.md
 ├── Fig_1.png
+├── Final.afdesign
+├── Final.afdesign~lock~
 ├── Long term goals.md
 ├── README.md
 ├── README_for_Model.md
 ├── README_for_visualization.md
 ├── Summary of the results.md
-├── figures
-│   ├── Fig_1.jpg
-│   ├── no_labels
-│   │   ├── Fig_1
-│   │   ├── Fig_2
-│   │   ├── Fig_3
-│   │   └── unsure or SI
-│   └── with_labels
+├── envirorment.yml
 ├── notebooks
 │   ├── Fig_0.ipynb
-│   ├── Fig_1 copy.ipynb
 │   ├── Fig_1.ipynb
-│   ├── Fig_2.ipynb
-│   ├── Fig_2_bootstrapping_31_03.ipynb
 │   ├── Fig_2_minimal_no_bootstrapping.ipynb
+│   ├── Fig_3_small copy.ipynb
+│   ├── Fig_3_small.ipynb
+│   ├── Fig_NONE_understanding.ipynb
 │   ├── Fig_SI.ipynb
-│   ├── OLD_notebooks
-│   │   ├── BEACON_REPO.png
-│   │   ├── Examples_0.ipynb
-│   │   ├── Fig_0 copy.ipynb
-│   │   ├── Fig_0_test.ipynb
-│   │   ├── Fig_1 copy.ipynb
-│   │   ├── Fig_1_NEW.ipynb
-│   │   ├── Fig_1_SIRM_old.ipynb
-│   │   ├── Fig_3_testing.ipynb
-│   │   ├── Fig_Intro.ipynb
-│   │   ├── QR Codes.ipynb
-│   │   ├── SIR-mask.ipynb
-│   │   ├── SIRM.ipynb
-│   │   ├── SIRT.ipynb
-│   │   ├── SIRV.ipynb
-│   │   ├── Sophias_data copy.ipynb
-│   │   ├── data_homophily.csv
-│   │   ├── homophily_analysis_with_std.png
-│   │   ├── homophily_effect_pub.png
-│   │   ├── masks_self_reported_histogram.png
-│   │   ├── physics_paper_qrcode.png
-│   │   ├── plasma_r_colorbar.png
-│   │   ├── plot_functions.py
-│   │   ├── test_for_viola_and_laura.ipynb
-│   │   └── viridis_r_colorbar.png
+│   ├── TESTS_25_11_27.ipynb
+│   ├── boot_hom.py
+│   ├── bootstrap_CM_module.py
 │   ├── data_homophily.csv
 │   ├── debugging_CM_homophily.ipynb
-│   ├── figures
-│   │   ├── Fig_0
-│   │   │   └── colorbar_contact_matrices.png
-│   │   ├── Fig_1
-│   │   │   └── colorbar_Inf.png
-│   │   ├── Fig_2
-│   │   └── SI
-│   │       └── combined_behaviors_joint_plot.png
 │   ├── helps.py
-│   └── parameters.json
-├── old_stuff
-│   ├── Fig_2.ipynb
-│   ├── Fig_2_final.ipynb
-│   ├── Fig_2_tests.ipynb
-│   ├── Fig_3_mean_pol.ipynb
-│   ├── Fig_Sophia.ipynb
-│   ├── Fig_test_0404.ipynb
-│   ├── README.md
-│   ├── Sophias_data.ipynb
-│   ├── Test_new_visual.ipynb
-│   ├── homophilyestimation.ipynb
-│   ├── infected_prop_polarization_homophily_mean_0.7.png
-│   └── polarization_homophily_sweep_mean_0.7.png
+│   ├── parameters.json
+│   └── parameters2.json
 ├── print_tree.ipynb
 ├── requirements.txt
 ├── setup.py
