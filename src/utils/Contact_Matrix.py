@@ -2,11 +2,12 @@ import jax
 import jax.numpy as jnp
 from typing import Tuple, Optional
 
-
-def normalize(M) -> jnp.ndarray:
-    """Normalize each column of the matrix to sum to 1"""
-    return M / jnp.sum(M, axis=1, keepdims=True)
-
+def normalize(M,pop):
+    M = M / (M @ pop)[:, None]
+    TC = jnp.sum(jnp.outer(pop, pop) * M) # Total contacts
+    M = M / TC # Normalize to total contacts
+    return M 
+    
 def create_contact_matrix(n_groups, homophilic_tendency, group_sizes, Cm_external = None, norm = True) -> jnp.ndarray:
     if Cm_external is None:
         positions = jnp.linspace(0, 1, n_groups)
@@ -17,8 +18,5 @@ def create_contact_matrix(n_groups, homophilic_tendency, group_sizes, Cm_externa
         C = Cm_external
 
     if norm:
-        C = normalize(C)
-        TC = jnp.sum(jnp.outer(group_sizes, group_sizes) * C) # Total contacts
-        C = C / TC # Normalize to total contacts
-    
+        C = normalize(C,group_sizes)
     return C

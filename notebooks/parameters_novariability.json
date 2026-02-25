@@ -21,11 +21,10 @@
         "SPB_exponent": 1,
         "fixed_mean": 0.5,
         "mu_min": 0,
-        "mu_max": 1,
+        "mu_max": 0,
         "testing_rate_min": 0,
-        "testing_rate_max2": 0.2714,
-        "testing_rate_max": 0.19799999999999998,
+        "testing_rate_max": 0,
         "vaccination_rate_min": 0,
-        "vaccination_rate_max": 0.01
+        "vaccination_rate_max": 0
     }
 }

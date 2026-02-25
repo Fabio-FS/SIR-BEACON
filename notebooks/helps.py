@@ -266,31 +266,28 @@ def calc_minmax_trajectories(model, min_hom_pol, max_hom_pol, mean, PARAMS, simu
     _ , I_min, R_min, *_ = run_single_simulation(min_hom_pol[0], min_hom_pol[1], mean, PARAMS, model, simulated_days=simulated_days)
     _ , I_max, R_max, *_ = run_single_simulation(max_hom_pol[0], max_hom_pol[1], mean, PARAMS, model, simulated_days=simulated_days)
     _ , I_base, R_base, *_ = run_single_simulation(0.0001, 0, mean, PARAMS, model, simulated_days=simulated_days)
-    _ , I_OG, R_OG, *_ =       run_single_simulation(0.0001, 0, 0.5, PARAMS, model, simulated_days=simulated_days)
+    
+    return [I_min, R_min], [I_max, R_max], [I_base, R_base]
 
-    return [I_min, R_min], [I_max, R_max], [I_base, R_base], [I_OG, R_OG]
 
-
-def plot_double_comparison(days, mins, maxs, bases, OG, pathname, Lx, Ly):
+def plot_double_comparison(days, mins, maxs, bases, pathname, Lx, Ly, color ="#B3DE69"):
     fig, ax = plt.subplots(1, 1, figsize=(Lx, Ly))
 
     Im, Rm = mins[0], mins[1]
     IM, RM = maxs[0], maxs[1]
 
     Ib, Rb = bases[0], bases[1]     # no info about distribution of behavior only average, beta and gamma and range
-    IG, RG = OG[0], OG[1]           # no info about average behavior, only about beta and gamma and range
     
-    ax.fill_between(days, Rm+Im, RM+IM, color='black', alpha=0.5)
+    ax.fill_between(days, Rm+Im, RM+IM, color=color, alpha=1)
     ax.plot(days, Rm+Im, color ="black", linewidth=0.5)
     ax.plot(days, RM+IM, color ="black", linewidth=0.5)
     ax.plot(days, Rb+Ib, '--',color ="black")
-    ax.plot(days, RG + IG, ':', color ="black")
 
     ax.set_xlim(0, 1000)
-    ax.set_ylim(-0.01, 0.6)
+    ax.set_ylim(-0.01, 1)
 
     ax.set_xticks([0,  500, 1000])
-    ax.set_yticks([0, 0.3, 0.6])
+    ax.set_yticks([0, 0.5, 1])
 
     ax.set_xticklabels([])
     ax.set_yticklabels([])
