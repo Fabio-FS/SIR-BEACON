@@ -224,7 +224,7 @@ def plot_fixed_polarization(results, P, model, PARAM, name):
 
 
 def find_hpol_minmax(model, ranges, PARAMS):
-    NB_quick = 40
+    NB_quick = 2
     pol_range = {"m": ranges["pol"][0], "M": ranges["pol"][2], "n": NB_quick}
     homophilic_tendency = {"m": ranges["h"][0], "M": ranges["h"][2], "n": NB_quick}
     PARAMS["fixed_mean"] = ranges["mean"][1]
@@ -261,27 +261,22 @@ def find_hpol_minmax(model, ranges, PARAMS):
 
     return [min_pol, min_hom], [max_pol, max_hom]
 
-def calc_minmax_trajectories(model, min_hom_pol, max_hom_pol, mean, PARAMS, simulated_days=1000):
+def calc_minmax_trajectories(model, min_hom_pol, max_hom_pol, mean, PARAMS, default_0_pol, default_0_hom, simulated_days=1000):
 
     _ , I_min, R_min, *_ = run_single_simulation(min_hom_pol[0], min_hom_pol[1], mean, PARAMS, model, simulated_days=simulated_days)
     _ , I_max, R_max, *_ = run_single_simulation(max_hom_pol[0], max_hom_pol[1], mean, PARAMS, model, simulated_days=simulated_days)
-    _ , I_base, R_base, *_ = run_single_simulation(0.0001, 0, mean, PARAMS, model, simulated_days=simulated_days)
+    _ , I_base, R_base, *_ = run_single_simulation(default_0_pol, default_0_hom, mean, PARAMS, model, simulated_days=simulated_days)
     
-    return [I_min, R_min], [I_max, R_max], [I_base, R_base]
+    return I_min + R_min, I_max + R_max, I_base + R_base
 
 
 def plot_double_comparison(days, mins, maxs, bases, pathname, Lx, Ly, color ="#B3DE69"):
     fig, ax = plt.subplots(1, 1, figsize=(Lx, Ly))
 
-    Im, Rm = mins[0], mins[1]
-    IM, RM = maxs[0], maxs[1]
-
-    Ib, Rb = bases[0], bases[1]     # no info about distribution of behavior only average, beta and gamma and range
-    
-    ax.fill_between(days, Rm+Im, RM+IM, color=color, alpha=1)
-    ax.plot(days, Rm+Im, color ="black", linewidth=0.5)
-    ax.plot(days, RM+IM, color ="black", linewidth=0.5)
-    ax.plot(days, Rb+Ib, '--',color ="black")
+    ax.fill_between(days, mins, maxs, color=color, alpha=1)
+    ax.plot(days, mins, color ="black", linewidth=0.5)
+    ax.plot(days, maxs, color ="black", linewidth=0.5)
+    ax.plot(days, bases, '--',color ="black")
 
     ax.set_xlim(0, 1000)
     ax.set_ylim(-0.01, 1)
