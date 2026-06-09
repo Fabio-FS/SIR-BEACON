@@ -1,9 +1,9 @@
-from src.models import SIRM, SIRT, SIRV
-from src.utils.batch_sweep import sweep_two_parameters
-from src.utils.visualization.trajectory import run_single_simulation
+from sir_model.models import SIRM, SIRT, SIRV
+from sir_model.utils.batch_sweep import sweep_two_parameters
+from sir_model.utils.visualization.trajectory import run_single_simulation
 
-from src.utils.visualization import *
-from src.utils.visualization.core import Lx, Ly
+from sir_model.utils.visualization import *
+from sir_model.utils.visualization.core import Lx, Ly
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -335,7 +335,7 @@ def calc_minmax_trajectories2(model, mins, maxs, mean, PARAMS, simulated_days = 
     })
     polarization = maxs[0]  # Polarization parameter
 
-    from src.utils.distributions import pol_mean_to_ab
+    from sir_model.utils.distributions import pol_mean_to_ab
     import jax.numpy as jnp
     beta_params = pol_mean_to_ab(polarization, params['fixed_mean'])
     

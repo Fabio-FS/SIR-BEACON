@@ -1,0 +1,136 @@
+:root {
+  --bg-page: #1c1c1a;
+  --bg-card: #262624;
+  --bg-panel: #2f2f2c;
+  --bg-input: #1c1c1a;
+  --text-primary: #f0eee6;
+  --text-secondary: #b3b1a8;
+  --text-tertiary: #8a8880;
+  --border: rgba(240, 238, 230, 0.12);
+  --border-strong: rgba(240, 238, 230, 0.22);
+  --accent-blue: #4a9eff;
+  --accent-orange: #e88a5f;
+  --accent-green: #7FBC41;
+  --accent-violet: #b18cff;
+  --accent-red: #e0566b;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.page { max-width: 760px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+
+header { margin-bottom: 1.5rem; }
+h1 { font-size: 24px; font-weight: 600; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+.byline { font-size: 13px; color: var(--text-secondary); margin: 0 0 1rem; }
+.intro { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+.block-title { font-size: 17px; font-weight: 600; margin: 2.5rem 0 0.4rem; letter-spacing: -0.01em; }
+.block-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 1rem; }
+
+.container {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.panel { background: var(--bg-panel); border-radius: var(--radius-md); padding: 0.75rem 1rem; }
+.panel-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+
+.plot-panel {
+  background: var(--bg-panel);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+.plot-caption { font-size: 12px; color: var(--text-secondary); text-align: center; margin-bottom: 8px; }
+
+label { font-size: 13px; color: var(--text-primary); }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 18px;
+  width: 100%;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: var(--bg-input); border-radius: 2px; }
+input[type="range"]::-moz-range-track { height: 4px; background: var(--bg-input); border-radius: 2px; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  margin-top: -6px;
+  border: none;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  border: none;
+}
+
+.slider-grid {
+  display: grid;
+  grid-template-columns: minmax(90px, auto) 1fr auto;
+  gap: 10px 14px;
+  align-items: center;
+}
+.slider-out { font-size: 13px; font-weight: 500; min-width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.seg {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0.5rem;
+}
+.seg button {
+  flex: 1;
+  background: var(--bg-input);
+  border: 0.5px solid var(--border);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.seg button:hover { color: var(--text-primary); }
+.seg button.active {
+  background: var(--bg-panel);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+@media (max-width: 560px) { .preview-grid { grid-template-columns: 1fr; } }
+
+.legend { display: flex; gap: 16px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+.legend-swatch { width: 12px; height: 3px; border-radius: 2px; }
+
+svg text { font-family: 'Inter', sans-serif; }
+
+.footer { margin-top: 2rem; font-size: 12px; color: var(--text-tertiary); line-height: 1.7; }
+.footer a { color: var(--accent-blue); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
