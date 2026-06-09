@@ -5,7 +5,6 @@ import numpy as np
 from .contact import beta_populations, contact_matrix, pol_mean_to_ab
 from .simulate import simulate, simulate_final
 
-
 def _ab_grid(pol_vals, second_vals, second_is_mean, fixed_mean):
     """Build (a, b) arrays of shape (len(pol_vals), len(second_vals))."""
     pol_vals = np.asarray(pol_vals)

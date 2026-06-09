@@ -8,15 +8,15 @@ from sir_model.sweep import sweep_pol_homophily, sweep_point_vs_baseline
 
 N_GROUPS = 5
 INIT_INF = 1e-6
-DT = 0.25
-N_STEPS = 3000
+DT = 1
+N_STEPS = 1000
 RECOVERY_RATE = 0.1
 
 MU_MAX = 0.8
 TESTING_RATE_MAX = 0.198
 VACCINATION_RATE_MAX = 0.01
 
-GRID_POINTS = 60
+GRID_POINTS = 20
 POL_VALS = jnp.linspace(0.01, 0.99, GRID_POINTS)
 H_VALS = jnp.linspace(0.0, 6.0, GRID_POINTS)
 R0_VALS = jnp.linspace(0.5, 5.0, GRID_POINTS)
